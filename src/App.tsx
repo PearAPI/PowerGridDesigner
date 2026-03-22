@@ -25,8 +25,8 @@ import BarretterTubeNode from './components/nodes/BarretterTubeNode';
 import NeonBulbNode from './components/nodes/NeonBulbNode';
 import RegulatorTubeNode from './components/nodes/RegulatorTubeNode';
 import PotentiometerNode from './components/nodes/PotentiometerNode';
-import PnpBjtNode from './components/nodes/PnpBjtNode';
-import NpnBjtNode from './components/nodes/NpnBjtNode';
+import Bjt_pnpNode from './components/nodes/PnpBjtNode';
+import Bjt_npnNode from './components/nodes/NpnBjtNode';
 import StaticInductionTransistorNode from './components/nodes/StaticInductionTransistorNode';
 import RelayDpdtNode from './components/nodes/RelayDpdtNode';
 import RelaySpdtNode from './components/nodes/RelaySpdtNode';
@@ -42,8 +42,8 @@ const nodeTypes = {
     neon_bulb: NeonBulbNode,
     regulator_tube: RegulatorTubeNode,
     potentiometer: PotentiometerNode,
-    pnp_bjt: PnpBjtNode,
-    npn_bjt: NpnBjtNode,
+    bjt_pnp: Bjt_pnpNode,
+    bjt_npn: Bjt_npnNode,
     static_induction_transistor: StaticInductionTransistorNode,
     relay_dpdt: RelayDpdtNode,
     relay_spdt: RelaySpdtNode,
