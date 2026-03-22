@@ -17,7 +17,7 @@ export type ComponentType =
     | 'varistor'
     | 'barretter_tube'
     | 'neon_bulb'
-    | 'lv_bulb'
+    | 'light_bulb'
     | 'regulator_tube'
     | 'potentiometer'
     | 'bjt_pnp'
@@ -121,6 +121,8 @@ export interface ComponentMeta {
     height?: number;
     /** If true, the node snaps and anchors perfectly to its center rather than top-left */
     centerOrigin?: boolean;
+    /** If true, label will be exported */
+    exportLabel?: boolean;
 }
 
 // Common pin definitions
@@ -164,15 +166,15 @@ const POT_PINS: ComponentPin[] = [
 ];
 
 const NPN_BJT_PINS: ComponentPin[] = [
-    { id: 'B', label: 'B', x: 0, y: 20 },
-    { id: 'C', label: 'C', x: 20, y: 0 },
-    { id: 'E', label: 'E', x: 20, y: 40 },
+    { id: 'C', label: 'C', x: 0, y: 20 },
+    { id: 'B', label: 'B', x: 20, y: 40 },
+    { id: 'E', label: 'E', x: 40, y: 20 },
 ];
 
 const PNP_BJT_PINS: ComponentPin[] = [
-    { id: 'B', label: 'B', x: 0, y: 20 },
-    { id: 'E', label: 'E', x: 20, y: 0 },
-    { id: 'C', label: 'C', x: 20, y: 40 },
+    { id: 'C', label: 'C', x: 40, y: 20 },
+    { id: 'B', label: 'B', x: 20, y: 40 },
+    { id: 'E', label: 'E', x: 0, y: 20 },
 ];
 
 const VFET_PINS: ComponentPin[] = [
@@ -214,7 +216,7 @@ const TRIODE_PINS: ComponentPin[] = [
 /** Registry of all components with their metadata */
 export const COMPONENT_REGISTRY: ComponentMeta[] = [
     // Passive
-    { type: 'connector', label: 'Wire Connector', idPrefix: 'WC', terminals: 1, category: 'passive', color: '#3a3888ff', pins: CONNECTOR_PIN, width: 40, height: 40 },
+    { type: 'connector', label: 'Wire Connector', idPrefix: 'WC', terminals: 1, category: 'passive', color: '#3a3888ff', pins: CONNECTOR_PIN, width: 40, height: 40, exportLabel: true },
     { type: 'via', label: 'Via', idPrefix: 'V', terminals: 1, category: 'passive', color: '#3a3888ff', pins: VIA_PIN, width: 20, height: 20, centerOrigin: true },
     {
         type: 'resistor', label: 'Resistor', idPrefix: 'R', terminals: 2, category: 'passive', color: '#ef4444', shortcutKey: 'r', pins: TWO_PINS,
@@ -238,7 +240,7 @@ export const COMPONENT_REGISTRY: ComponentMeta[] = [
         ]
     },
     {
-        type: 'lv_bulb', label: 'LV Bulb', idPrefix: 'LVB', terminals: 2, category: 'passive', color: '#fff492ff', pins: LV_BULB_PINS,
+        type: 'light_bulb', label: 'LV Bulb', idPrefix: 'LVB', terminals: 2, category: 'passive', color: '#fff492ff', pins: LV_BULB_PINS, exportLabel: true,
     },
     // Active
     {
@@ -252,7 +254,7 @@ export const COMPONENT_REGISTRY: ComponentMeta[] = [
         ]
     },
     {
-        type: 'neon_bulb', label: 'Neon Bulb', idPrefix: 'NE', terminals: 2, category: 'active', color: '#fbbf24', pins: TUBE_PINS,
+        type: 'neon_bulb', label: 'Neon Bulb', idPrefix: 'NE', terminals: 2, category: 'active', color: '#fbbf24', pins: TUBE_PINS, exportLabel: true,
         properties: [{ id: 'neon_bulb_vb', label: 'Breakdown Voltage', unit: 'V', defaultValue: 60, min: 30, max: 300 }]
     },
     {

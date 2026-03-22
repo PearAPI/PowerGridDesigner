@@ -19,20 +19,64 @@ function buildComponentProperties(c: CircuitComponent): Record<string, any> {
     props['powergrid:orientation'] = int(c.orientation || 0);
 
     // 2. Component-Specific Properties
-    switch (c.type) {
-        case 'resistor':
-            props['powergrid:vertical'] = byte(1);
-            props['powergrid:resistor_value'] = float(c.customProperties?.resistance ?? 1000.0);
-            props['powergrid:tolerance'] = float(c.customProperties?.tolerance ?? 5.0);
-            break;
-        case 'bjt_npn':
-        case 'bjt_pnp':
-            props['powergrid:gain'] = float(c.customProperties?.gain ?? 20.0);
-            props['powergrid:vce_max'] = float(c.customProperties?.vce_max ?? 40.0);
-            break;
-        case 'static_induction_transistor':
-            props['powergrid:gain'] = float(c.customProperties?.gain ?? 10.0);
-            break;
+    if (c.customProperties) {
+        for (const [key, value] of Object.entries(c.customProperties)) {
+            props[key] = float(value);
+        }
+    }
+
+    // switch (c.type) {
+    //     case 'resistor':
+    //         props['powergrid:vertical'] = byte(1);
+    //         props['powergrid:resistor_value'] = float(c.customProperties?.resistance ?? 1000.0);
+    //         props['powergrid:tolerance'] = float(c.customProperties?.tolerance ?? 5.0);
+    //         break;
+    //     case 'bjt_npn':
+    //     case 'bjt_pnp':
+    //         props['powergrid:bjt_gain'] = float(c.customProperties?.gain ?? 20.0);
+    //         break;
+    //     case 'static_induction_transistor':
+    //         props['powergrid:vfet_gain'] = float(c.customProperties?.gain ?? 10.0);
+    //         break;
+    //     case 'neon_bulb':
+    //         props['powergrid:breakdown_voltage'] = float(c.customProperties?.breakdown_voltage ?? 60.0);
+    //         break;
+    //     case 'light_bulb':
+    //         props['powergrid:voltage'] = float(c.customProperties?.voltage ?? 12.0);
+    //         break;
+    //     case 'potentiometer':
+    //         props['powergrid:vertical'] = byte(1);
+    //         props['powergrid:resistance'] = float(c.customProperties?.resistance ?? 1000.0);
+    //         props['powergrid:tolerance'] = float(c.customProperties?.tolerance ?? 5.0);
+    //         break;
+    //     case 'diode':
+    //         props['powergrid:vertical'] = byte(1);
+    //         props['powergrid:breakdown_voltage'] = float(c.customProperties?.breakdown_voltage ?? 60.0);
+    //         break;
+    //     case 'varistor':
+    //         props['powergrid:vertical'] = byte(1);
+    //         props['powergrid:breakdown_voltage'] = float(c.customProperties?.breakdown_voltage ?? 60.0);
+    //         break;
+    //     case 'barretter_tube':
+    //         props['powergrid:vertical'] = byte(1);
+    //         props['powergrid:breakdown_voltage'] = float(c.customProperties?.breakdown_voltage ?? 60.0);
+    //         break;
+    //     case 'electron_tube':
+    //         props['powergrid:vertical'] = byte(1);
+    //         props['powergrid:breakdown_voltage'] = float(c.customProperties?.breakdown_voltage ?? 60.0);
+    //         break;
+    //     case 'relay_dpdt':
+    //         props['powergrid:vertical'] = byte(1);
+    //         props['powergrid:breakdown_voltage'] = float(c.customProperties?.breakdown_voltage ?? 60.0);
+    //         break;
+    //     case 'relay_spdt':
+    //         props['powergrid:vertical'] = byte(1);
+    //         props['powergrid:breakdown_voltage'] = float(c.customProperties?.breakdown_voltage ?? 60.0);
+    //         break;
+    // }
+
+    if (c.label) {
+        props['powergrid:label'] = string(c.label);
     }
 
     // Wrap the dictionary as a native prismarine-nbt Compound Tag
