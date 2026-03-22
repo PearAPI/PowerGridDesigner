@@ -2,6 +2,7 @@ import type { CircuitState } from '../types/circuit';
 import { serializeBoard } from './serializeBoard';
 import * as nbt from 'prismarine-nbt';
 import pako from 'pako';
+import JSZip from 'jszip';
 
 /**
  * NBT Compiler — Stub implementation.
@@ -16,69 +17,106 @@ import pako from 'pako';
 
 /** A palette entry in the NBT schematic */
 interface PaletteEntry {
-  Name: string;
-  Properties?: Record<string, string>;
+    Name: string;
+    Properties?: Record<string, string>;
 }
 
 /** A block entry in the NBT schematic */
 interface BlockEntry {
-  pos: [number, number, number];
-  state: number; // index into palette
-  nbt?: Record<string, unknown>;
+    pos: [number, number, number];
+    state: number; // index into palette
+    nbt?: Record<string, unknown>;
 }
 
 /** The compiled NBT structure (JSON representation) */
 export interface NbtStructure {
-  size: [number, number, number];
-  palette: PaletteEntry[];
-  blocks: BlockEntry[];
-  DataVersion: number;
+    size: [number, number, number];
+    palette: PaletteEntry[];
+    blocks: BlockEntry[];
+    DataVersion: number;
 }
 
 /**
  * Compile a CircuitState into an NBT-ready structure.
  * Maps each component to a palette entry + block positions.
  */
-export function compileToNbtStructure(state: CircuitState): any {
-  // The root Tag_Compound must have an explicit empty name field to compile into a valid NBT byte stream
-  const boardTag = {
-      type: 'compound',
-      name: '',
-      value: serializeBoard(state.components, state.wireCells, 0, 0).value
-  };
-  
-  // Attach the blueprint name to the root compound as requested
-  boardTag.value.Name = nbt.string("PowerGrid Blueprint");
-  
-  return boardTag;
+export function compileToNbtStructure(state: CircuitState, boardX = 0, boardY = 0): any {
+    // 1. Filter components strictly within this specific 16x16 board
+    const boardComponents = state.components.filter(c =>
+        c.position.x >= boardX * 16 && c.position.x < (boardX + 1) * 16 &&
+        c.position.y >= boardY * 16 && c.position.y < (boardY + 1) * 16
+    );
+
+    // 2. Filter wires strictly within this specific 16x16 board
+    const boardWires = state.wireCells.filter(w =>
+        w.x >= boardX * 16 && w.x < (boardX + 1) * 16 &&
+        w.y >= boardY * 16 && w.y < (boardY + 1) * 16
+    );
+
+    const boardTag = {
+        type: 'compound',
+        name: '',
+        // 3. Pass the filtered lists to your perfectly safe serializeBoard function!
+        value: serializeBoard(boardComponents, boardWires, boardX, boardY).value
+    };
+
+    boardTag.value.Name = nbt.string(`PowerGrid Board ${boardX},${boardY}`);
+    return boardTag;
 }
 
 /**
  * Export the NBT structure as a downloadable binary .nbt file.
  */
 export async function downloadNbtBinary(state: CircuitState, filename = 'circuit_board.nbt') {
-  try {
-    const rootTag = compileToNbtStructure(state);
+    try {
+        const rootTag = compileToNbtStructure(state);
 
-    // Bypass restrictive inner typings which expect root names on nameless schematic roots
-    const buffer = nbt.writeUncompressed(rootTag as any);
-    
-    // Minecraft requires .nbt schematic files to be structurally GZIP compressed
-    const compressedUint8Array = pako.gzip(new Uint8Array(buffer));
-    
-    const blob = new Blob([compressedUint8Array], { type: 'application/x-gzip' });
-    const url = URL.createObjectURL(blob);
+        // Bypass restrictive inner typings which expect root names on nameless schematic roots
+        const buffer = nbt.writeUncompressed(rootTag as any);
+
+        // Minecraft requires .nbt schematic files to be structurally GZIP compressed
+        const compressedUint8Array = pako.gzip(new Uint8Array(buffer));
+
+        const blob = new Blob([compressedUint8Array], { type: 'application/x-gzip' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        return true; // Success
+    } catch (error) {
+        console.error("Failed to compile NBT binary:", error);
+        throw error;
+    }
+}
+
+export async function downloadMultiTileZip(state: CircuitState, tilesX: number, tilesY: number) {
+    const zip = new JSZip();
+
+    for (let y = 0; y < tilesY; y++) {
+        for (let x = 0; x < tilesX; x++) {
+            // Generate the NBT for this specific X/Y tile
+            const rootTag = compileToNbtStructure(state, x, y);
+            const buffer = nbt.writeUncompressed(rootTag as any);
+            const compressed = pako.gzip(new Uint8Array(buffer));
+
+            // Add it to the ZIP archive
+            zip.file(`board_${x}_${y}.nbt`, compressed);
+        }
+    }
+
+    // Generate and download the ZIP file
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(zipBlob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = filename;
+    a.download = 'powergrid_multi_board.zip';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
-    return true; // Success
-  } catch (error) {
-    console.error("Failed to compile NBT binary:", error);
-    throw error;
-  }
 }

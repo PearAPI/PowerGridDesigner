@@ -71,7 +71,6 @@ export default function WireGridOverlay() {
                 {cells
                     .filter(c => c.layer === activeLayer)
                     .map(c => (
-                        //<g key={c.key}>
                         <rect
                             x={c.x * CELL_SIZE - CELL_SIZE / 2}
                             y={c.y * CELL_SIZE - CELL_SIZE / 2}
@@ -83,27 +82,8 @@ export default function WireGridOverlay() {
                             stroke={c.key === selectedWireKey ? '#fbbf24' : 'none'}
                             strokeWidth={c.key === selectedWireKey ? 2 : 0}
                         />
-                        //    {hasJunction(wireGrid, c.x, c.y, c.layer) && (
-                        //        <circle
-                        //            cx={c.x * CELL_SIZE + CELL_SIZE / 2}
-                        //            cy={c.y * CELL_SIZE + CELL_SIZE / 2}
-                        //            r={3}
-                        //            fill="#fbbf24"
-                        //            opacity={0.9}
-                        //        />
-                        //    )}
-                        //</g>
                     ))}
             </g>
         </svg>
     );
-}
-
-function hasJunction(grid: Map<string, boolean>, x: number, y: number, layer: WireLayer): boolean {
-    let count = 0;
-    if (grid.has(`${x - 1},${y},${layer}`)) count++;
-    if (grid.has(`${x + 1},${y},${layer}`)) count++;
-    if (grid.has(`${x},${y - 1},${layer}`)) count++;
-    if (grid.has(`${x},${y + 1},${layer}`)) count++;
-    return count >= 3;
 }
