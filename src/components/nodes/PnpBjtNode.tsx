@@ -1,0 +1,11 @@
+import { memo } from 'react';
+import { type NodeProps } from '@xyflow/react';
+import { BaseNodeComponent } from './BaseNode';
+
+const PnpBjtNode = memo(({ ...props }: NodeProps) => (
+    <BaseNodeComponent nodeProps={props} svgContent={
+        <img style={{ imageRendering: 'pixelated', width: '100%', height: '100%' }} src="bjt_pnp.png" alt="PNP BJT" />
+    } />
+));
+PnpBjtNode.displayName = 'PnpBjtNode';
+export default PnpBjtNode;

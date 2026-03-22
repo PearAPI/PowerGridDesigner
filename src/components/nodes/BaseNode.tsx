@@ -1,0 +1,101 @@
+import { memo } from 'react';
+import { type NodeProps } from '@xyflow/react';
+import { facingToDeg } from '../../store/circuitStore';
+import { COMPONENT_MAP, type Facing } from '../../types/circuit';
+
+interface BaseNodeData {
+  label: string;
+  facing: Facing;
+  componentType: string;
+  value?: number;
+  unit?: string;
+  color: string;
+  [key: string]: unknown;
+}
+
+interface BaseNodeProps {
+  nodeProps: NodeProps;
+  svgContent: React.ReactNode;
+  width?: number;
+  height?: number;
+}
+
+/**
+ * Shared base component for all circuit node types.
+ *
+ * NODE SIZE: 40x40 (2×2 grid cells at 20px).
+ * STATIC PINS: Handles are edge-aligned.
+ * Only the SVG body rotates.
+ */
+function BaseNodeComponent({ nodeProps, svgContent, width = 40, height = 40 }: BaseNodeProps) {
+  const data = nodeProps.data as unknown as BaseNodeData;
+  const meta = COMPONENT_MAP[data.componentType as keyof typeof COMPONENT_MAP];
+  const deg = facingToDeg(data.facing || 'north');
+
+  const cx = width / 2;
+  const cy = height / 2;
+  const rotatedPins = (meta?.pins || []).map(pin => {
+    const dx = pin.x - cx;
+    const dy = pin.y - cy;
+    let rx = dx, ry = dy;
+
+    switch (data.facing) {
+      case 'east': rx = -dy; ry = dx; break;
+      case 'south': rx = -dx; ry = -dy; break;
+      case 'west': rx = dy; ry = -dx; break;
+    }
+    return { ...pin, x: cx + rx, y: cy + ry };
+  });
+
+  return (
+    <div
+      className="circuit-node"
+      style={{ width, height }}
+      data-selected={nodeProps.selected ? 'true' : undefined}
+    >
+      {/* SVG body — ONLY this rotates */}
+      <div
+        className="circuit-node-body"
+        style={{ transform: `rotate(${deg}deg)`, width, height }}
+      >
+        {svgContent}
+      </div>
+
+      {/* Label overlay (does not rotate) */}
+      <div className="circuit-node-label">
+        <span className="circuit-node-id">{data.label}</span>
+        {data.value !== undefined && (
+          <span className="circuit-node-value">
+            {formatValue(data.value)}{data.unit || ''}
+          </span>
+        )}
+      </div>
+
+      {/* Smart Pins Overlay (Always Visible) */}
+      <div className="circuit-pins">
+        {rotatedPins.map(pin => (
+          <div
+            key={pin.id}
+            className="pin-marker"
+            style={{ left: pin.x, top: pin.y }}
+          >
+            <div className="pin-dot" style={{ backgroundColor: meta?.color || '#38bdf8' }} />
+            <span className="pin-label">{pin.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function formatValue(v: number): string {
+  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
+  if (v >= 1000) return `${(v / 1000).toFixed(1)}K`;
+  if (v < 0.001) return `${(v * 1_000_000).toFixed(1)}µ`;
+  if (v < 1) return `${(v * 1000).toFixed(1)}m`;
+  return v.toString();
+}
+
+export default memo(BaseNodeComponent);
+export { BaseNodeComponent, formatValue };
+export type { BaseNodeData };
