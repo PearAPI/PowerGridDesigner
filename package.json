@@ -1,6 +1,6 @@
 {
     "name": "powergriddesigner",
-    "homepage": "https://pearapi.github.io/PowerGridDesigner/",
+    "homepage": "pearapi.github.io/PowerGridDesigner/",
     "private": true,
     "version": "0.0.0",
     "type": "module",
