@@ -32,6 +32,7 @@ import RelayDpdtNode from './components/nodes/RelayDpdtNode';
 import RelaySpdtNode from './components/nodes/RelaySpdtNode';
 import WireConnectorNode from './components/nodes/WireConnectorNode';
 import ViaConnectorNode from './components/nodes/ViaConnectorNode';
+import ElectronTubeNode from './components/nodes/ElectronTubeNode';
 
 const nodeTypes = {
     resistor: ResistorNode,
@@ -41,6 +42,7 @@ const nodeTypes = {
     barretter_tube: BarretterTubeNode,
     neon_bulb: NeonBulbNode,
     regulator_tube: RegulatorTubeNode,
+    electron_tube: ElectronTubeNode,
     potentiometer: PotentiometerNode,
     bjt_pnp: Bjt_pnpNode,
     bjt_npn: Bjt_npnNode,

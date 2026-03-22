@@ -98,7 +98,7 @@ export function buildNetlist(state: CircuitState): Netlist {
 
     // Create branches for each component (2-terminal → 1 branch; 3-terminal → 2 branches)
     for (const comp of state.components) {
-        const resistance = comp.value || 1000;
+        const resistance = comp.customProperties?.resistance || 1000;
         const isDirectional = comp.type === 'diode';
 
         const t0Root = findRoot(`${comp.id}:t0`);

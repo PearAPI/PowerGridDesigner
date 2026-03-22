@@ -167,6 +167,13 @@ export const useCircuitStore = create<CircuitStoreState>((set, get) => ({
   addComponent: (type, position) => {
     const meta = COMPONENT_MAP[type];
     const id = nextId(meta.idPrefix);
+
+    // Initialize custom properties from metadata defaults
+    const customProperties: Record<string, number> = {};
+    meta.properties?.forEach(p => {
+      customProperties[p.id] = p.defaultValue;
+    });
+
     const newNode: Node = {
       id,
       type,
@@ -183,8 +190,7 @@ export const useCircuitStore = create<CircuitStoreState>((set, get) => ({
         componentType: type,
         facing: 'north' as Facing,
         orientation: 0,
-        value: meta.defaultValue,
-        unit: meta.unit,
+        customProperties,
         color: meta.color,
         terminals: meta.terminals,
       },
@@ -287,7 +293,7 @@ export const useCircuitStore = create<CircuitStoreState>((set, get) => ({
         position: { x: Math.round(n.position.x / 20), y: Math.round(n.position.y / 20) },
         facing: (n.data.facing || 'north') as Facing,
         orientation: (n.data.orientation as number) || 0,
-        value: n.data.value as number | undefined,
+        customProperties: n.data.customProperties as Record<string, number>,
         label: n.data.label as string | undefined,
       })),
       wireCells,

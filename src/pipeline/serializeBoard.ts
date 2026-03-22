@@ -21,13 +21,17 @@ function buildComponentProperties(c: CircuitComponent): Record<string, any> {
     // 2. Component-Specific Properties
     switch (c.type) {
         case 'resistor':
-            props['powergrid:vertical'] = byte(1); // Natively must be TAG_Byte
-            props['powergrid:resistor_value'] = float(c.value !== undefined ? c.value : 100.0);
+            props['powergrid:vertical'] = byte(1);
+            props['powergrid:resistor_value'] = float(c.customProperties?.resistance ?? 1000.0);
+            props['powergrid:tolerance'] = float(c.customProperties?.tolerance ?? 5.0);
             break;
-        case 'static_induction_transistor':
         case 'bjt_npn':
         case 'bjt_pnp':
-            // Foundation laid for future transistor properties
+            props['powergrid:gain'] = float(c.customProperties?.gain ?? 20.0);
+            props['powergrid:vce_max'] = float(c.customProperties?.vce_max ?? 40.0);
+            break;
+        case 'static_induction_transistor':
+            props['powergrid:gain'] = float(c.customProperties?.gain ?? 10.0);
             break;
     }
 
