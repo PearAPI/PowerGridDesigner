@@ -17,6 +17,7 @@ export type ComponentType =
     | 'varistor'
     | 'barretter_tube'
     | 'neon_bulb'
+    | 'lv_bulb'
     | 'regulator_tube'
     | 'potentiometer'
     | 'bjt_pnp'
@@ -151,6 +152,11 @@ const REGULATOR_TUBE_PINS: ComponentPin[] = [
     { id: 'Cathode', label: '-', x: 40, y: 20 },
 ];
 
+const LV_BULB_PINS: ComponentPin[] = [
+    { id: 'T1', label: '1', x: 0, y: 20 },
+    { id: 'T2', label: '2', x: 40, y: 20 },
+];
+
 const POT_PINS: ComponentPin[] = [
     { id: 'T1', label: '1', x: 20, y: 40 },
     { id: 'T2', label: '2', x: 60, y: 40 },
@@ -208,8 +214,8 @@ const TRIODE_PINS: ComponentPin[] = [
 /** Registry of all components with their metadata */
 export const COMPONENT_REGISTRY: ComponentMeta[] = [
     // Passive
-    { type: 'connector', label: 'Wire Connector', idPrefix: 'WC', terminals: 1, category: 'passive', color: '#64748b', pins: CONNECTOR_PIN, width: 40, height: 40 },
-    { type: 'via', label: 'Via', idPrefix: 'V', terminals: 1, category: 'passive', color: '#64748b', pins: VIA_PIN, width: 20, height: 20, centerOrigin: true },
+    { type: 'connector', label: 'Wire Connector', idPrefix: 'WC', terminals: 1, category: 'passive', color: '#3a3888ff', pins: CONNECTOR_PIN, width: 40, height: 40 },
+    { type: 'via', label: 'Via', idPrefix: 'V', terminals: 1, category: 'passive', color: '#3a3888ff', pins: VIA_PIN, width: 20, height: 20, centerOrigin: true },
     {
         type: 'resistor', label: 'Resistor', idPrefix: 'R', terminals: 2, category: 'passive', color: '#ef4444', shortcutKey: 'r', pins: TWO_PINS,
         properties: [
@@ -230,6 +236,9 @@ export const COMPONENT_REGISTRY: ComponentMeta[] = [
             { id: 'potentiometer_resistance', label: 'Max Resistance', unit: 'Ω', defaultValue: 10000, min: 100, max: 100_000 },
             { id: 'potentiometer_value', label: 'Value', unit: '%', defaultValue: 50, min: 0, max: 100 }
         ]
+    },
+    {
+        type: 'lv_bulb', label: 'LV Bulb', idPrefix: 'LVB', terminals: 2, category: 'passive', color: '#fff492ff', pins: LV_BULB_PINS,
     },
     // Active
     {
