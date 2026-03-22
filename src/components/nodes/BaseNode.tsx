@@ -27,9 +27,11 @@ interface BaseNodeProps {
  * STATIC PINS: Handles are edge-aligned.
  * Only the SVG body rotates.
  */
-function BaseNodeComponent({ nodeProps, svgContent, width = 40, height = 40 }: BaseNodeProps) {
+function BaseNodeComponent({ nodeProps, svgContent, width: propsWidth, height: propsHeight }: BaseNodeProps) {
   const data = nodeProps.data as unknown as BaseNodeData;
   const meta = COMPONENT_MAP[data.componentType as keyof typeof COMPONENT_MAP];
+  const width = propsWidth || meta?.width || 40;
+  const height = propsHeight || meta?.height || 40;
   const deg = facingToDeg(data.facing || 'north');
 
   const cx = width / 2;
@@ -50,13 +52,13 @@ function BaseNodeComponent({ nodeProps, svgContent, width = 40, height = 40 }: B
   return (
     <div
       className="circuit-node"
-      style={{ width, height }}
+      style={{ width: `${width}px`, height: `${height}px` }}
       data-selected={nodeProps.selected ? 'true' : undefined}
     >
       {/* SVG body — ONLY this rotates */}
       <div
         className="circuit-node-body"
-        style={{ transform: `rotate(${deg}deg)`, width, height }}
+        style={{ transform: `rotate(${deg}deg)`, width: `${width}px`, height: `${height}px` }}
       >
         {svgContent}
       </div>

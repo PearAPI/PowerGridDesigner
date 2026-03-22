@@ -25,8 +25,8 @@ function buildComponentProperties(c: CircuitComponent): Record<string, any> {
             props['powergrid:resistor_value'] = float(c.value !== undefined ? c.value : 100.0);
             break;
         case 'static_induction_transistor':
-        case 'npn_bjt':
-        case 'pnp_bjt':
+        case 'bjt_npn':
+        case 'bjt_pnp':
             // Foundation laid for future transistor properties
             break;
     }
@@ -41,7 +41,7 @@ function buildComponentProperties(c: CircuitComponent): Record<string, any> {
  */
 export function serializeBoard(components: CircuitComponent[], wires: WireCell[], boardX: number, boardY: number): Record<string, any> {
     const nbtComponents: any[] = [];
-    
+
     // Board origins in continuous grid cell space
     const startX = boardX * 16;
     const startY = boardY * 16;
@@ -85,12 +85,12 @@ export function serializeBoard(components: CircuitComponent[], wires: WireCell[]
         for (let y = 0; y < 16; y++) {
             for (let x = 0; x < 16; x++) {
                 if (pixels[(y * 16) + x]) {
-                    const longIndex = Math.floor(y / 4); 
-                    
+                    const longIndex = Math.floor(y / 4);
+
                     // Calculate the exact bit position (0 to 63) within this specific Long
                     // y % 4 gives us the row within the Long (0-3). Multiply by 16 columns.
                     const bitIndex = BigInt((y % 4) * 16 + x);
-                    
+
                     // Simply shift 1 by the bit index and OR it into the Long
                     longs[longIndex] |= (1n << bitIndex);
                 }

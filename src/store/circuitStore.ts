@@ -109,8 +109,8 @@ export const useCircuitStore = create<CircuitStoreState>((set, get) => ({
       if (!meta) continue;
 
       const ox = meta.centerOrigin ? 0.5 : 0;
-      const widthPx = meta.width || (meta.terminals >= 5 ? 100 : 40);
-      const heightPx = meta.height || (meta.terminals >= 5 ? 80 : 40);
+      const widthPx = meta.width || 40;
+      const heightPx = meta.height || 40;
 
       const facing = node.data.facing as Facing;
       let wPx = widthPx;
@@ -135,9 +135,33 @@ export const useCircuitStore = create<CircuitStoreState>((set, get) => ({
   },
 
   onNodesChange: (changes) => {
-    // Prevent React Flow from automatically resizing nodes based on internal DOM bounding box measurements during drag
-    const filteredChanges = changes.filter(c => c.type !== 'dimensions');
-    set({ nodes: applyNodeChanges(filteredChanges, get().nodes) });
+    const nodes = get().nodes;
+    const nextChanges = changes.map(change => {
+      if (change.type === 'position' && change.position) {
+        return {
+          ...change,
+          position: {
+            x: Math.round(change.position.x / 20) * 20,
+            y: Math.round(change.position.y / 20) * 20,
+          },
+        };
+      }
+      if (change.type === 'dimensions' && change.dimensions) {
+        const node = nodes.find(n => n.id === change.id);
+        const meta = node ? COMPONENT_MAP[node.data.componentType as ComponentType] : null;
+        if (meta) {
+          return {
+            ...change,
+            dimensions: {
+              width: meta.width || 40,
+              height: meta.height || 40,
+            },
+          };
+        }
+      }
+      return change;
+    });
+    set({ nodes: applyNodeChanges(nextChanges, get().nodes) });
   },
 
   addComponent: (type, position) => {
@@ -151,6 +175,9 @@ export const useCircuitStore = create<CircuitStoreState>((set, get) => ({
         x: Math.round(position.x / 20) * 20,
         y: Math.round(position.y / 20) * 20,
       },
+      width: meta.width || 40,
+      height: meta.height || 40,
+      style: { width: meta.width || 40, height: meta.height || 40 },
       data: {
         label: id,
         componentType: type,

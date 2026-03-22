@@ -10,6 +10,7 @@ export type ToolType = 'select' | 'wire' | 'eraser' | ComponentType;
 /** Supported component types matching Create: Power Grid blocks */
 export type ComponentType =
     | 'connector'
+    | 'via'
     | 'resistor'
     | 'capacitor'
     | 'diode'
@@ -113,8 +114,12 @@ export interface ComponentMeta {
 }
 
 // Common pin definitions
-const CENTER_PIN: ComponentPin[] = [
-    { id: 'C', label: 'C', x: 30, y: 30 },
+const CONNECTOR_PIN: ComponentPin[] = [
+    { id: 'C', label: 'C', x: 20, y: 20 },
+];
+
+const VIA_PIN: ComponentPin[] = [
+    { id: 'C', label: 'C', x: 10, y: 10 },
 ];
 
 const TWO_PINS: ComponentPin[] = [
@@ -186,11 +191,12 @@ const SPDT_PINS: ComponentPin[] = [
 /** Registry of all components with their metadata */
 export const COMPONENT_REGISTRY: ComponentMeta[] = [
     // Passive
-    { type: 'connector', label: 'Wire Connector', idPrefix: 'WC', terminals: 1, category: 'passive', color: '#64748b', pins: CENTER_PIN, width: 60, height: 60, centerOrigin: true },
+    { type: 'connector', label: 'Wire Connector', idPrefix: 'WC', terminals: 1, category: 'passive', color: '#64748b', pins: CONNECTOR_PIN, width: 40, height: 40 },
+    { type: 'via', label: 'Via', idPrefix: 'V', terminals: 1, category: 'passive', color: '#64748b', pins: VIA_PIN, width: 20, height: 20, centerOrigin: true },
     { type: 'resistor', label: 'Resistor', idPrefix: 'R', defaultValue: 1000, unit: 'Ω', terminals: 2, category: 'passive', color: '#ef4444', shortcutKey: 'r', pins: TWO_PINS },
     { type: 'capacitor', label: 'Capacitor', idPrefix: 'C', defaultValue: 0.001, unit: 'F', terminals: 2, category: 'passive', color: '#3b82f6', shortcutKey: 'c', pins: TWO_PINS },
-    { type: 'varistor', label: 'Varistor', idPrefix: 'VR', defaultValue: 100, unit: 'Ω', terminals: 2, category: 'passive', color: '#f97316', pins: VARISTOR_PINS },
-    { type: 'potentiometer', label: 'Potentiometer', idPrefix: 'POT', defaultValue: 10000, unit: 'Ω', terminals: 3, category: 'passive', color: '#8b5cf6', pins: POT_PINS },
+    { type: 'varistor', label: 'Varistor', idPrefix: 'VR', defaultValue: 100, unit: 'Ω', terminals: 2, category: 'passive', color: '#f97316', pins: VARISTOR_PINS, width: 60, height: 40 },
+    { type: 'potentiometer', label: 'Potentiometer', idPrefix: 'POT', defaultValue: 10000, unit: 'Ω', terminals: 3, category: 'passive', color: '#8b5cf6', pins: POT_PINS, width: 60, height: 60 },
     // Active
     { type: 'diode', label: 'Diode', idPrefix: 'D', defaultValue: 0.7, unit: 'V', terminals: 2, category: 'active', color: '#10b981', pins: TWO_PINS },
     { type: 'barretter_tube', label: 'Barretter Tube', idPrefix: 'BT', terminals: 2, category: 'active', color: '#ec4899', pins: TUBE_PINS },
@@ -200,8 +206,8 @@ export const COMPONENT_REGISTRY: ComponentMeta[] = [
     { type: 'bjt_npn', label: 'NPN BJT', idPrefix: 'Q', terminals: 3, category: 'active', color: '#14b8a6', pins: NPN_BJT_PINS },
     { type: 'static_induction_transistor', label: 'Static Induction Transistor', idPrefix: 'SIT', terminals: 3, category: 'active', color: '#a855f7', pins: VFET_PINS },
     // Switching
-    { type: 'relay_dpdt', label: 'Relay DPDT', idPrefix: 'K', terminals: 8, category: 'switching', color: '#64748b', pins: DPDT_PINS },
-    { type: 'relay_spdt', label: 'Relay SPDT', idPrefix: 'K', terminals: 5, category: 'switching', color: '#94a3b8', pins: SPDT_PINS },
+    { type: 'relay_dpdt', label: 'Relay DPDT', idPrefix: 'K', terminals: 8, category: 'switching', color: '#64748b', pins: DPDT_PINS, width: 80, height: 80 },
+    { type: 'relay_spdt', label: 'Relay SPDT', idPrefix: 'K', terminals: 5, category: 'switching', color: '#94a3b8', pins: SPDT_PINS, width: 60, height: 80 },
 ];
 
 /** Map from ComponentType to ComponentMeta for quick lookup */

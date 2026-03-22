@@ -31,6 +31,7 @@ import StaticInductionTransistorNode from './components/nodes/StaticInductionTra
 import RelayDpdtNode from './components/nodes/RelayDpdtNode';
 import RelaySpdtNode from './components/nodes/RelaySpdtNode';
 import WireConnectorNode from './components/nodes/WireConnectorNode';
+import ViaConnectorNode from './components/nodes/ViaConnectorNode';
 
 const nodeTypes = {
     resistor: ResistorNode,
@@ -47,6 +48,7 @@ const nodeTypes = {
     relay_dpdt: RelayDpdtNode,
     relay_spdt: RelaySpdtNode,
     connector: WireConnectorNode,
+    via: ViaConnectorNode,
 };
 
 const GRID_SIZE = 20;
@@ -184,8 +186,7 @@ export default function App() {
                         edges={[]}
                         onNodesChange={onNodesChange}
                         nodeTypes={nodeTypes}
-                        snapToGrid
-                        snapGrid={[GRID_SIZE, GRID_SIZE]}
+                        snapToGrid={false}
                         onInit={(instance) => { reactFlowRef.current = instance; }}
                         onNodeClick={(_, node) => {
                             if (activeTool === 'select') setSelectedNode(node.id);
