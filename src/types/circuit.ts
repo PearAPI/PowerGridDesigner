@@ -19,6 +19,7 @@ export type ComponentType =
     | 'neon_bulb'
     | 'light_bulb'
     | 'regulator_tube'
+    | 'inductor'
     | 'potentiometer'
     | 'bjt_pnp'
     | 'bjt_npn'
@@ -241,6 +242,10 @@ export const COMPONENT_REGISTRY: ComponentMeta[] = [
     },
     {
         type: 'light_bulb', label: 'LV Bulb', idPrefix: 'LVB', terminals: 2, category: 'passive', color: '#fff492ff', pins: LV_BULB_PINS, exportLabel: true,
+    },
+    {
+        type: 'inductor', label: 'Inductor', idPrefix: 'L', terminals: 2, category: 'passive', color: '#fff492ff', pins: TWO_PINS, exportLabel: true,
+        properties: [{ id: 'inductance', label: 'Inductance', unit: 'mH', defaultValue: 0.1, min: 1E-4, max: 1000 }]
     },
     // Active
     {

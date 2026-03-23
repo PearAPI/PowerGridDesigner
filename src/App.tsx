@@ -34,6 +34,7 @@ import WireConnectorNode from './components/nodes/WireConnectorNode';
 import ViaConnectorNode from './components/nodes/ViaConnectorNode';
 import ElectronTubeNode from './components/nodes/ElectronTubeNode';
 import LVBulbNode from './components/nodes/LVBulbNode';
+import InductorNode from './components/nodes/InductorNode';
 
 const nodeTypes = {
     resistor: ResistorNode,
@@ -52,6 +53,7 @@ const nodeTypes = {
     relay_dpdt: RelayDpdtNode,
     relay_spdt: RelaySpdtNode,
     connector: WireConnectorNode,
+    inductor: InductorNode,
     via: ViaConnectorNode,
 };
 
